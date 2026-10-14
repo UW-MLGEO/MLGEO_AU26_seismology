@@ -1,0 +1,10 @@
+[workspace]
+authors = ["Meredith-Carter <charmincat@icloud.com>"]
+channels = ["conda-forge"]
+name = "MLGEO_AU26_volcanology"
+platforms = ["osx-arm64"]
+version = "0.1.0"
+
+[tasks]
+
+[dependencies]
