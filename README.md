@@ -1,5 +1,7 @@
 # MLGEO_AU26_volcanology
 
+I created this code while using macOS Tahoe and a local computer. 
+
 ## Installing the Repository
 
 This code will install and prepare the code to be run. 
