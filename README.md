@@ -50,6 +50,8 @@ To run the pipeline notebooks:
     - notebooks/prepare_ai_ready_data.ipynb
     - notebooks/EDA.ipynb
     - notebooks/dimensionality_reduction.ipynb
+4. Smoke Test
+    - /scripts/smoke_test.py
 
 ## Favorite Earth Science Topics:
 
