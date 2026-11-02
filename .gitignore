@@ -1,0 +1,9 @@
+# pixi environments
+.pixi/*
+!.pixi/config.toml
+
+# Ignore raw and cleaned datasets
+data/
+*.hdf5
+*.hf
+*.csv
