@@ -9,6 +9,7 @@ This repository provides an end-to-end pipeline to acquire, clean, document, and
 - **Data Access:** PNSN / IRIS Web Services & PNWML HDF5 event catalog.
 - **License:** Creative Commons Attribution 4.0 International (CC-BY-4.0).
 - **Citation:** Code and documentation preserved in `data/ai_ready/description.yml`.
+- **Retrieval Date** 10/20/2026 from SeisBench
 
 ---
 
