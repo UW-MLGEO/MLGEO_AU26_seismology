@@ -1,4 +1,4 @@
-# MLGEO_AU26_volcanology
+# MLGEO_AU26_seismology
 
 ## Installing the Repository
 
