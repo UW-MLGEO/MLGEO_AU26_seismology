@@ -94,6 +94,8 @@ The full agent evaluation report is saved in AI_logs/agent_eval.md.
 
 Upon auditing the agent's evaluation, the agent awared a score of 2 for criteria B3 (Noise) based on windowed SNR calculations in notebooks/prepare_ai_ready_data.ipynb , but this score is unsupported by the evidence. While the code calucates windowed signal-to-noise ratios, it does not separate or model instrumental sensor noise from background noise. According to the rubric, a score of 2 requires documented instrumental noise. Therefore, B3 strictly scores a 1. I identified this error by directly reading the SNR implementation in the notebook and verifying the absence of instrument response files.
 
+In addition, the agent cited the wrong file for A3 (Quality and Gaps) and B1 (Diversity). The agent supposedly found the instructions for how to clean the data in DATASET_SUMMARY.md, however this information is actually in `description.yml`. Conversely, the agent said it found B1 in description.yml but it was really in `prepare_ai_ready_data.ipynb`. In summary, for both of these tests the agent found the proper data within our files, however it mistakenly put the wrong source for how to find the information in the future. 
+
 ## Reflections and Future Directions
 
 1. What did you learn from this exercise?
