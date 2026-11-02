@@ -5,8 +5,8 @@
 This code will install and prepare the code to be run. 
 
 ```
-git clone https://github.com/UW-MLGEO/MLGEO_AU26_volcanology.git
-cd MLGEO_AU26_volcanology
+git clone https://github.com/UW-MLGEO/MLGEO_AU26_seismology.git
+cd MLGEO_AU26_seismology
 git pull
 ```
 
