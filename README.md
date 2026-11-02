@@ -1,5 +1,17 @@
 # MLGEO_AU26_seismology
 This repository provides an end-to-end pipeline to acquire, clean, document, and partition a 3-component ground motion seismic dataset from the Pacific Northwest Seismic Network (PNSN). The dataset is formatted to satisfy rigorous benchmark specifications for machine learning workflows in geophysics and earth observation.
+
+---
+
+## Data Sources & Citations
+
+- **Source Catalog:** Pacific Northwest Seismic Network (PNSN) / University of Washington Seismology Lab.
+- **Data Access:** PNSN / IRIS Web Services & PNWML HDF5 event catalog.
+- **License:** Creative Commons Attribution 4.0 International (CC-BY-4.0).
+- **Citation:** Code and documentation preserved in `data/ai_ready/description.yml`.
+
+---
+
 ## Installing the Repository
 
 This code will install and prepare the code to be run. 
@@ -17,11 +29,9 @@ git pull
 This project uses Pixi for environment and dependency management. 
 
 ```
-# Install environment dependencies via Pixi
+# Install environment dependencies via Pixi and register Jupyter kernel
 pixi install
-
-# Register the Pixi kernel for Jupyter notebooks (VS Code / Jupyter Lab)
-pixi run python -m ipykernel install --user --name MLGEO_AU26_seismology --display-name "Python (Pixi MLGEO)
+pixi run python -m ipykernel install --user --name MLGEO_AU26_seismology --display-name "Python (Pixi MLGEO)"
 ```
 Legacy setup via Conda can also be initialized using:
 
@@ -46,38 +56,51 @@ To run the pipeline notebooks:
 - Volcanology
 - Seismology
 
-## AI Readiness Criteria Evaluation Matrix
+# AI Agent Dataset Evaluation Report
 
-| Category | Criteria | Score | Rationale & Code Evidence Location |
-| :--- | :--- | :---: | :--- |
-| **A. Data Processing Pipeline** | A1. Pipeline Structure & Reproducibility | 1.0 | Standardized modular directory structure (`data/raw/`, `data/clean/`, `data/ai_ready/`, `notebooks/`, `scripts/`). Fully reproducible via Pixi environment configuration (`pixi.toml`). |
-| | A2. Raw Data Preservation | 1.0 | Unaltered HDF5 raw waveform datasets preserved in `data/raw/waveforms.hdf5`. All cleaning outputs written strictly to separate `data/clean/` directory. |
-| | A3. Metadata & Inventory Tracking | 1.0 | Dataset inventory summarized in `data/clean/DATASET_SUMMARY.md` documenting schema, trace counts, missing value policies, and file sizes. |
-| | A4. AI-Ready Export Manifest | 1.0 | Machine-readable YAML manifest exported to `data/ai_ready/description.yml` specifying array dimensions, sampling rates, unit metrics, and variable schemas. |
-| **B. AI Readiness Criteria** | B1. Sample Diversity & Unit Metrics | 1.0 | Dataset spans 281 independent seismic stations, 8,055 unique seismic events, and 6 network operators across the Pacific Northwest region. |
-| | B2. Target & Feature Distribution | 1.0 | Documented in `notebooks/EDA.ipynb`. Target $M_w/M_L$ distribution ranges from 0.0 to 4.8 (mean 1.32). Rare tail class ($M \ge 3.0$) isolated (329 records / 1.77%). |
-| | B3. Signal-to-Noise & Quality Assessment | 1.0 | Evaluated SNR on waveform windows in `notebooks/Prepare_AI_Ready_Data.ipynb`. Rejection logic handles missing/flatlined signals and non-numeric artifacts. |
-| | B4. Data Augmentation Validity | 1.0 | Defined physical validity constraints: random temporal shifts preserve wave phase alignment; independent cross-channel shuffling breaks wave polarization physics. |
-| | B5. Label Provenance & Data Leakage | 1.0 | Labels sourced directly from PNSN catalog analyst picks. Station-based geographic partitioning prevents spatiotemporal data leakage between splits. |
-| | B6. Dimensionality & Space Complexity | 1.0 | Analyzed in `notebooks/Dimensionality_Reduction.ipynb`. Full raw tensor dimension $N=18640, D=4500$ (~320 MB float32). PCA shows just **2 components** capture $\ge 90\%$ (over $97\%$) of overall variance due to dominant amplitude scale factors. |
-| | B7. Independent Partitioning Strategy | 1.0 | Station holdout partition exported to `data/ai_ready/partitions.parquet` (85% train: 15,808; 10% test: 1,781; 5% val: 1,051). |
+## Evaluation Matrix
 
-## Agentic Workflow Critique
+| Criterion | Score | Evidence Quoted | Notes / Missing Elements |
+| :--- | :---: | :--- | :--- |
+| **A1 Provenance** | 2 | `data/ai_ready/description.yml` (lines 3-5) | PNSN/UW Seismology Lab attribution, CC-BY-4.0 license, and catalog citation present. |
+| **A2 Homogenization** | 2 | `data/ai_ready/description.yml` (lines 7-10) | Uniform 100 Hz sampling rate, 15s duration (1500 samples), 3-component counts, UTC time base. |
+| **A3 Quality and gaps** | 2 | `data/clean/DATASET_SUMMARY.md` | Dead channels, NaNs, and sentinel values rejected during cleaning phase. |
+| **A4 Structure and metadata** | 2 | `data/ai_ready/description.yml` (lines 12-25) | Machine-readable YAML manifest detailing array shapes `[3, 1500]` and variable schema. |
+| **B1 Diversity** | 2 | `data/ai_ready/description.yml` (lines 31-34) | Covers 281 independent stations, 8,055 unique events, and 6 regional networks. |
+| **B2 Distribution** | 2 | `notebooks/EDA.ipynb` | Magnitude range 0.0–4.8 ($M \ge 3.0$ rare tail isolated at 329 records / 1.77%). |
+| **B3 Noise** | 2 | `notebooks/Prepare_AI_Ready_Data.ipynb` | Windowed SNR calculations on pre-P noise vs. signal windows. |
+| **B4 Augmentation** | 2 | `README.md` | Defined physical validity constraints (phase shifting vs. cross-channel shuffling). |
+| **B5 Labels** | 2 | `data/ai_ready/description.yml` (line 36) | Analyst-reviewed PNSN catalog picks and magnitude determinations. |
+| **B6 Dimensionality** | 2 | `notebooks/Dimensionality_Reduction.ipynb` | $N=18640, D=4500$. PCA shows 2 components capture >97% of overall variance. |
+| **B7 Partitioning** | 2 | `data/ai_ready/partitions.parquet` | Geographic station-holdout splits (85% train / 10% test / 5% val) by independent unit. |
 
-### Strengths and Efficiency Gains
-- Automated Refactoring: AI tools accelerated routine conversion, file format standardization (CSV to Parquet), and HDF5 slicing logic.
-- Error Diagnostics: Fast identification of datatype mismatches (string SNR values in pandas) and pathing nesting issues in terminal environments
+## Lowest Scores / Author Recommendations
+1. **B3 Noise:** Provide explicit sensor transfer function response curves alongside windowed SNR.
+2. **B5 Labels:** Include formal analyst pick variance/uncertainty estimates in seconds.
+3. **A2 Homogenization:** Add explicit metadata flags tracking historical instrument updates across station operational lifespans.
+EOF
 
-### Failures and Technical Blind Spots
+## AI Agent Critique & AI-Use Disclosure
+### AI Tools & Usage Disclosure
+- Tools Used: Large Language Model Assistant (GitHub Copilot)
+- Tasks Automated: Routine syntax refactoring, Parquet export, Markdown table formatting, and PCA visualization code.
+- Verification Performed: All generated code was executed in the local Pixi environment; file outputs (description.yml and partitions.parqut) were manually inspected and validated against terminal ls and git status checks.
 
-- Missing Domain Constraints: AI initial scripts attempted generic random row splitting rather than seismology specific station holdout partitioning, which would cause spatiotemporal data leakage.
-- Type Assumptions: Assumed HDF5 attributes and metadata numeric fields contained uniform floats, requiring manual exception handling for non-numerica/NaN values.
+### Critique of Agent Evaluation Report
+The full agent evaluation report is saved in AI_logs/agent_eval.md.
+
+Upon auditing the agent's evaluation, the agent awared a score of 2 for criteria B3 (Noise) based on windowed SNR calculations in notebooks/prepare_ai_ready_data.ipynb , but this score is unsupported by the evidence. While the code calucates windowed signal-to-noise ratios, it does not separate or model instrumental sensor noise from background noise. According to the rubric, a score of 2 requires documented instrumental noise. Therefore, B3 strictly scores a 1. I identified this error by directly reading the SNR implementation in the notebook and verifying the absence of instrument response files.
 
 ## Reflections and Future Directions
 
-1. How does station based holdout partitioning protect deep learning models from overestimating generalization performance on regional seismic data? Seismic signals recorded at the same station share identical sit responses, subsurface geology, and sensor path characteristics. Randomly splitting traces across time would put traces from the same station into both train and test sets, allowing neural networks to memorize stationsignatures rather than learning earthquake physics. Geographic station holdout guarantees the model is evaluated on unseen locations.
+1. What did you learn from this exercise?
+I learned how earth science domain constraints dictate machine learning pipeline design. In notebooks/prepare_ai_ready_data.ipynb , partitioning data by station ID rather than random row splitting prevents models from memorizing specific site responses and subsurface path features, ensuring true evaluation on unseen geographic location.
 
-2. What are the primary computational bottlenecks when scaling waveform tensor processing from thousands to millions of records? Random disk inputs/outputs across massive HDF5 files represent the main bottleneck. At scale, chunking strategies, converting binary stores to modern cloud native formats, and pre-loading flattened contiguous arrays into GPU memory during batching become essential to prevent pipeline starvation.
+2. What did you learn from interacting with agents or chatbots?
+I asked the assistant to generate EDA scripts, PCA dimensionality reduction routines, and rubric score tables. The tool excelled at syntax generation and data formatting, however, it struggled with directory nesting. Duplicate data/ai_ready/data/ai_ready/ paths were created and a score of 2 on criteria B3 was given without verifying wheteher instrumental noise models actually existed  in the repository. I discovered this by inspecting the filesystem and reading the code line by line.
+
+3. What would you suggest to improve this assignment so it meets its learning goals?
+I recommend providing explicit guidelines early on regarding how raw HDF5 binary data interacts with tabular Parquet metadata would reduce initial pathing and datatype confusion.
 
 ## Licensing
 
