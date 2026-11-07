@@ -1,43 +1,40 @@
-name: "PNWML Seismic Dataset (AI-Ready Subsampled Set)"
-version: "1.0.0"
-provenance: "Pacific Northwest Seismic Network (PNSN) / UW Seismology Lab"
-license: "CC-BY-4.0"
-citation: "PNSN & University of Washington Earth and Space Sciences PNWML benchmark dataset."
-
+citation: PNSN & University of Washington Earth and Space Sciences PNWML benchmark
+  dataset.
+label_source: Cataloged PNSN analyst pick labels and magnitude determinations.
+license: CC-BY-4.0
+missing_data_policy: Rows with null coordinates or invalid magnitudes were dropped.
+  Traces containing NaNs, Infs, or flatlined dead channels are rejected.
+name: PNWML Seismic Dataset (AI-Ready Subsampled Set)
+number_of_independent_units:
+  events: 8055
+  networks: 6
+  stations: 281
+partition_definitions:
+  split_axis: Spatiotemporal / Station holdout (B7)
+  test: 10% held-out geographic station region/time window
+  train: 80% of independent stations
+  validation: 10% of independent stations
+provenance: Pacific Northwest Seismic Network (PNSN) / UW Seismology Lab
 sampling:
-  rate_hz: 100
   duration_seconds: 15
   num_samples_per_trace: 1500
-
+  rate_hz: 100
 variables:
-  trace_data:
-    description: "3-component waveform ground motion acceleration/velocity traces"
-    units: "counts"
-    dtype: "float32"
-    shape: "[3, 1500]"
   source_magnitude:
-    description: "Earthquake moment/local magnitude"
-    units: "magnitude units"
-    dtype: "float32"
+    description: Earthquake moment/local magnitude
+    dtype: float32
+    units: magnitude units
   station_latitude_deg:
-    description: "Seismic station latitude"
-    units: "degrees_north"
-    dtype: "float64"
+    description: Seismic station latitude
+    dtype: float64
+    units: degrees_north
   station_longitude_deg:
-    description: "Seismic station longitude"
-    units: "degrees_east"
-    dtype: "float64"
-
-missing_data_policy: "Rows with null coordinates or invalid magnitudes were dropped. Traces containing NaNs, Infs, or flatlined dead channels are rejected."
-
-number_of_independent_units:
-  stations: "Dynamic count based on unique station_code"
-  events: "Dynamic count based on unique event_id"
-
-label_source: "Cataloged PNSN analyst pick labels and magnitude determinations."
-
-partition_definitions:
-  split_axis: "Spatiotemporal / Station holdout (B7)"
-  train: "80% of independent stations"
-  validation: "10% of independent stations"
-  test: "10% held-out geographic station region/time window"
+    description: Seismic station longitude
+    dtype: float64
+    units: degrees_east
+  trace_data:
+    description: 3-component waveform ground motion acceleration/velocity traces
+    dtype: float32
+    shape: '[3, 1500]'
+    units: counts
+version: 1.0.0
