@@ -2,4 +2,4 @@
 
 This project is important, because many algorithms that calculate earthquake magnitudes struggle due to various factors, such as low signal to noise ratio or incorrect estimations done by the algorithm. Our project will calculate magnitudes based on the first 3 seconds of a seismic waveform. We are going to use a supervised approach since we have the final analyst reviewed magnitude classification. We are going to use a neural network to run a regression and find the most likely magnitude given a waveform. We will then compare this calculated magnitude with the magnitude found by an analyst and minimize the mean absolute error. We expect that for a given event, our algorithm will accurately calculate the magnitude given only the first 3 seconds of data. 
 
-AI Disclousure: None of this file was created with the use of AI. 
+AI Disclousure: None of this file was created with the use of AI. Overall, we used UW Purple Sonnet 5 for literature search queries, code scaffolding, and rubric alignment checks. We also used the built-in Agent in VSCode to assist with creating and debugging code. 
