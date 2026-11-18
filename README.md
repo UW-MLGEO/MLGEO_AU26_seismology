@@ -54,6 +54,39 @@ To run the pipeline notebooks:
 4. Smoke Test
     - /scripts/smoke_test.py
 
+## Final Project: Classical Machine Learning (CML)
+
+The CML part of the project predicts earthquake magnitude (regression) from single-station PNSN recordings. The repository version for this submission is recorded in `VERSION.txt`.
+
+### Reproducing the analyses
+
+Run the data notebooks first (`Download_Data.ipynb` and `data_cleaning.ipynb`, see above), then run these notebooks top to bottom with the Python (Pixi MLGEO) kernel:
+
+| Order | Notebook | What it does | Approx. run time* |
+| :--- | :--- | :--- | :--- |
+| 1 | `notebooks/Clustering_Analysis.ipynb` | PCA + K-means clustering of the waveforms, compared with magnitude | not timed |
+| 2 | `notebooks/AutoML_Hyperparameter_Tuning.ipynb` | Mean baseline, then Ridge, Random Forest, Extra Trees, HistGradientBoosting and MLP compared and tuned with `RandomizedSearchCV` | ~20 min |
+| 3 | `notebooks/Model_Training_Assessment.ipynb` | Feature extraction, cross-validation scheme comparison, model selection, learning curves, bootstrapping, bagging, subset/generality tests and the single test-set evaluation; writes `data/ai_ready/waveform_features.parquet` | ~10 min (longer the first time, while features are extracted) |
+| 4 | `notebooks/Computational_Time_Analysis.ipynb` | Training/prediction timing, hyperparameter speed sweeps, time vs. accuracy, deployment estimates; Section 6 needs the feature file from notebook 3 | ~20 min |
+
+\*On a 6-core desktop CPU with 8 GB RAM. Close other notebooks while running notebook 4, since it measures wall-clock time.
+
+### Key findings
+
+- **The input window matters more than the model.** The first 300 samples (3 s) of each trace come before the P arrival (the earliest P pick is at sample 5,006), so models trained on that raw window barely beat the mean baseline. In `AutoML_Hyperparameter_Tuning.ipynb`, with a train-on-M < 2, test-on-M ≥ 2 split, the best model (Extra Trees) reached a test RMSE of 1.34, against 1.39 for the mean baseline.
+- **Features measured around the P and S picks work much better.** `Model_Training_Assessment.ipynb` uses 23 features: amplitudes, coda duration, band powers, S-P time and channel type. With these, the selected HistGradientBoosting model reaches a test RMSE of **0.415** magnitude units per recording (R² 0.66) and 0.400 per event, against 0.716 for the mean baseline. The validation estimate (0.413) matched the test result.
+- **The cross-validation scheme changes the reported score.** Random K-fold was about 10% optimistic (0.374 vs 0.413), mostly because of instrument changes over time. Blocked, event-grouped cross-validation gave an accurate estimate.
+- **Bootstrapping and bagging.**
+  - Resampling events instead of rows gives about 2x wider, more honest confidence intervals.
+  - Bagging helps high-variance learners (deep trees: 0.571 → 0.424) and does nothing for Ridge, kNN or the MLP.
+- **Remaining weak spots.**
+  - Large (M ≥ 3) events are under-predicted.
+  - Broadband (BH) channels, networks other than UW, and stations never seen in training have higher error.
+  - Amplitudes are in raw counts, without instrument-response correction.
+- **Computation is not the bottleneck.**
+  - The final model trains in about 1 s and predicts in about 6 ms per recording, and the full catalog can be reprocessed in under a minute.
+  - In real time, the main delay is waiting for data: the features need about 60 s of signal after the P arrival.
+
 ## Favorite Earth Science Topics:
 
 - Volcanology
